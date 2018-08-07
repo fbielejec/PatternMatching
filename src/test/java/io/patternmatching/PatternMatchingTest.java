@@ -2,6 +2,7 @@ package io.patternmatching;
 
 import io.patternmatching.interpreter.AnyExpression;
 import io.patternmatching.interpreter.Expression;
+import io.patternmatching.interpreter.OrExpression;
 import io.patternmatching.interpreter.TerminalExpression;
 import io.patternmatching.visitor.Branch;
 import io.patternmatching.visitor.Matcher;
@@ -19,7 +20,7 @@ public class PatternMatchingTest extends TestCase {
 		return new TestSuite( PatternMatchingTest.class );
 	}
 
-	public void testPatternMatching() {
+	public void testAnyExpression() {
 		Expression T = new TerminalExpression(true);
 		Expression F = new TerminalExpression(false);
 		Expression _ = new AnyExpression();
@@ -42,4 +43,27 @@ public class PatternMatchingTest extends TestCase {
 		assertEquals("Branch with index 1 matches the pattern", 1, m.match());
 	}
 
+		public void testOrExpression() {
+		Expression T = new TerminalExpression(true);
+		Expression F = new TerminalExpression(false);
+		Expression _ = new AnyExpression();
+
+		Expression[] pattern = new Expression[] {F, T, F};
+
+		Branch b1 = new Branch(new Expression[] {F, F, T});
+		Branch b2 = new Branch(new Expression[] {F, T, T});
+		Branch b3 = new Branch(new Expression[] {new OrExpression(T, F), T, F});
+		Branch b4 = new Branch(new Expression[] {T, T, T});
+
+		Branch[] branches = new Branch[]{b1, 
+				b2, 
+				b3, 
+				b4
+		};
+
+		Matcher m = new Matcher(pattern, branches);
+
+		assertEquals("Branch with index 1 matches the pattern", 2, m.match());
+	}
+	
 }
